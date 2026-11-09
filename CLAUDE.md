@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Project rules and pointers for Claude Code. The generic working process (branching, plan/review, test loop, docs, behaviour) is in the user-level `~/.claude/CLAUDE.md`, not here.
 
 ## What this is
 
@@ -24,7 +24,7 @@ python domain-helper.py --dry-run          # preview candidates, no API calls
 python domain-helper.py --help             # all CLI flags
 ```
 
-Run tests (89 tests, unittest-based):
+Run tests (unittest-based):
 ```sh
 python -m unittest test_domain_helper -v
 python -m unittest test_domain_helper.TestDomainChecker -v      # one class
@@ -47,7 +47,7 @@ Pipeline through cooperating classes, all in `domain-helper.py`:
 - **`RateLimiter`** — thread-safe global lock enforcing `min_interval` between API calls
   regardless of how many worker threads are checking concurrently.
 - **`DomainChecker`** — does the actual API Ninjas HTTP call per domain, with retry +
-  exponential backoff on 429/5xx, and structured 5Ws (Who/What/Where/Why/When) error
+  linear backoff (`retry_backoff * attempt`) on 429/5xx, and structured 5Ws (Who/What/Where/Why/When) error
   logging on failure.
 - **`CheckpointManager`** (`checkpoint.json`) — saves progress mid-run so an interrupted
   run can resume; cleared on successful completion.
